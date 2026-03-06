@@ -1,0 +1,99 @@
+name: 💡 Solicitação de Funcionalidade
+description: Sugira uma nova funcionalidade para o projeto
+title: "[FEATURE] "
+labels: ["enhancement", "precisa-triagem"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por sugerir uma nova funcionalidade para o **NVN.PLUS**! Por favor, preencha os campos abaixo com o máximo de detalhes possível.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área do Projeto
+      description: Em qual área do NVN.PLUS esta funcionalidade se encaixa?
+      options:
+        - WhatsApp / Conexão
+        - FlowBuilder / Chatbot
+        - CRM / Atendimento
+        - API / Webhooks / Integrações
+        - Docker / Instalação
+        - Configuração / Variáveis de Ambiente
+        - Relatórios
+        - Interface / UX
+        - Outro
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema Relacionado
+      description: Existe algum problema que esta funcionalidade resolveria?
+      placeholder: Eu sempre fico frustrado quando...
+    validations:
+      required: false
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução Proposta
+      description: Descreva a solução que você gostaria de ver implementada
+      placeholder: Eu gostaria que o sistema pudesse...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: Você considerou alguma solução alternativa?
+      placeholder: Outra forma de resolver seria...
+    validations:
+      required: false
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefícios
+      description: Quais seriam os benefícios desta funcionalidade?
+      placeholder: |
+        - Melhoraria a experiência do usuário
+        - Aumentaria a produtividade
+        - etc.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade
+      description: Qual a prioridade desta funcionalidade na sua opinião?
+      options:
+        - Baixa
+        - Média
+        - Alta
+        - Crítica
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer outra informação ou contexto sobre a solicitação
+      placeholder: Screenshots, mockups, exemplos, etc.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: Confirme os itens abaixo antes de submeter
+      options:
+        - label: Eu verifiquei que não existe uma solicitação similar já criada nas issues do NVN.PLUS
+          required: true
+        - label: Esta funcionalidade está alinhada com os objetivos da plataforma (comunicação, CRM e helpdesk)
+          required: true
+        - label: Entendo que a implementação depende da avaliação e priorização da equipe
+          required: true
