@@ -16,7 +16,7 @@ Se você descobriu uma vulnerabilidade de segurança no NVN.PLUS, **não abra um
 ### Como Reportar
 
 1. **E-mail**: Envie um relatório detalhado para **security@nvn.plus** com o assunto `[SECURITY] Descrição breve da vulnerabilidade`
-2. **GitHub**: Utilize o recurso de [reporte privado de vulnerabilidades](https://github.com/nvngroup/nvnplus/security/advisories/new) do GitHub
+2. **GitHub**: Utilize o recurso de [reporte privado de vulnerabilidades](https://github.com/brunocgc/nvnplus/security/advisories/new) do GitHub
 
 ### O que Incluir no Relatório
 
