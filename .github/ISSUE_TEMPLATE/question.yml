@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Obrigado por fazer uma pergunta sobre o **NVN.PLUS**! Estamos aqui para ajudar.
-        Antes de continuar, consulte a [documentação](https://github.com/nvngroup/nvnplus/wiki) e verifique se sua dúvida já foi respondida nas [issues existentes](https://github.com/nvngroup/nvnplus/issues).
+        Antes de continuar, consulte a [documentação](https://github.com/brunocgc/nvnplus/wiki) e verifique se sua dúvida já foi respondida nas [issues existentes](https://github.com/brunocgc/nvnplus/issues).
 
   - type: dropdown
     id: area
