@@ -1,5 +1,3 @@
-# nvnplus
-
 > 🇧🇷 **Para usuários em Português, veja abaixo.**
 
 ---
