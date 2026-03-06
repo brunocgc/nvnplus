@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Mirror issue to nvngroup/nvnplus
         env:
-          GH_TOKEN: ${{ secrets.MIRROR_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
