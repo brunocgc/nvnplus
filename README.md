@@ -1,27 +1,49 @@
-# nvnplus (brunocgc)
+> 🇧🇷 **Para usuários em Português, veja abaixo.**
 
-Repositório de captura de issues de clientes finais para o projeto [nvngroup/nvnplus](https://github.com/nvngroup/nvnplus).
+---
 
-## Como funciona
+## 📢 Important Notice
 
-Quando uma issue é aberta (ou alterada) neste repositório, o workflow de CI/CD a transporta automaticamente para [nvngroup/nvnplus](https://github.com/nvngroup/nvnplus).
+This repository is **not** the main source code repository for **nvnplus**.
 
-### Ações suportadas
+Its purpose is exclusively to:
 
-| Ação neste repositório | Ação em nvngroup/nvnplus |
-|------------------------|--------------------------|
-| Issue aberta (`opened`) | Nova issue criada |
-| Issue editada (`edited`) | Issue correspondente atualizada |
-| Issue fechada (`closed`) | Issue correspondente fechada |
-| Issue reaberta (`reopened`) | Issue correspondente reaberta |
-| Issue deletada (`deleted`) | Issue correspondente fechada com aviso |
+- 🐛 **Track Issues** — report bugs, unexpected behavior, or any problems you encounter while using nvnplus.
+- 💬 **Host Discussions** — share ideas, ask questions, request features, and engage with the community.
 
-## Configuração
+If you are looking for the software itself, please visit the official channels provided by the nvnplus team.
 
-Para que o workflow funcione, é necessário configurar um token com permissão de escrita no repositório `nvngroup/nvnplus`:
+### How to contribute
 
-1. Gere um **Personal Access Token (PAT)** ou **Fine-grained token** com permissão `Issues: Read and Write` no repositório `nvngroup/nvnplus`.
-2. No repositório `brunocgc/nvnplus`, acesse **Settings → Secrets and variables → Actions**.
-3. Crie um novo secret chamado `MIRROR_PAT` com o valor do token gerado.
+| What you want to do | Where to go |
+|---|---|
+| Report a bug | [Open an Issue](../../issues/new/choose) |
+| Ask a question or discuss a topic | [Start a Discussion](../../discussions/new/choose) |
+| Browse known issues | [Issues list](../../issues) |
+| Browse ongoing discussions | [Discussions list](../../discussions) |
 
-> **Nota:** O `GITHUB_TOKEN` padrão do GitHub Actions só tem acesso ao repositório atual. Para transportar issues entre repositórios, é necessário um PAT configurado como secret `MIRROR_PAT` com acesso ao repositório de destino.
+We appreciate every report and piece of feedback — it helps us make nvnplus better for everyone! 🙏
+
+---
+
+## 📢 Aviso Importante
+
+Este repositório **não** é o repositório principal com o código-fonte do **nvnplus**.
+
+Seu objetivo é exclusivamente:
+
+- 🐛 **Registrar Issues** — reporte bugs, comportamentos inesperados ou qualquer problema que você encontre ao usar o nvnplus.
+- 💬 **Hospedar Discussões** — compartilhe ideias, faça perguntas, solicite funcionalidades e interaja com a comunidade.
+
+Se você está procurando o software em si, acesse os canais oficiais disponibilizados pela equipe nvnplus.
+
+### Como contribuir
+
+| O que você quer fazer | Onde ir |
+|---|---|
+| Reportar um bug | [Abrir uma Issue](../../issues/new/choose) |
+| Fazer uma pergunta ou discutir um tópico | [Iniciar uma Discussão](../../discussions/new/choose) |
+| Ver problemas conhecidos | [Lista de Issues](../../issues) |
+| Ver discussões em andamento | [Lista de Discussões](../../discussions) |
+
+Agradecemos cada relato e feedback — isso nos ajuda a melhorar o nvnplus para todos! 🙏
