@@ -1,0 +1,150 @@
+name: Mirror Issues to nvngroup/nvnplus
+
+# This workflow mirrors issues from brunocgc/nvnplus (client-facing repo)
+# to nvngroup/nvnplus (main project repo).
+#
+# Required secret:
+#   MIRROR_PAT - A Personal Access Token (PAT) or Fine-grained token with
+#                "Issues: Read and Write" permission on nvngroup/nvnplus.
+#                Configure it at: Settings > Secrets and variables > Actions.
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - deleted
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
+
+jobs:
+  mirror-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+
+    steps:
+      - name: Mirror issue to nvngroup/nvnplus
+        env:
+          GH_TOKEN: ${{ secrets.MIRROR_PAT }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          EVENT_ACTION: ${{ github.event.action }}
+          SOURCE_REPO: brunocgc/nvnplus
+          TARGET_REPO: nvngroup/nvnplus
+        run: |
+          set -euo pipefail
+
+          # Unique marker embedded in the issue body to identify mirrored issues.
+          # Format: <!-- mirror-source: brunocgc/nvnplus#<number> -->
+          SOURCE_MARKER="<!-- mirror-source: ${SOURCE_REPO}#${ISSUE_NUMBER} -->"
+
+          # Build the full body with source attribution and marker
+          FULL_BODY=$(printf '> **Origem / Source:** %s\n> **Autor / Author:** @%s\n\n---\n\n%s\n\n%s' \
+            "$ISSUE_URL" "$ISSUE_AUTHOR" "$ISSUE_BODY" "$SOURCE_MARKER")
+
+          # Helper: find the mirrored issue number in the target repo by the source marker
+          find_target_issue() {
+            local query
+            query=$(printf 'repo:%s %s in:body' "$TARGET_REPO" "$SOURCE_MARKER")
+            curl -s \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/search/issues?q=$(python3 -c \
+                'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$query")" \
+            | jq -r '.items[0].number // empty'
+          }
+
+          # Helper: create an issue in the target repo; exits on failure
+          create_issue() {
+            local title="$1" body="$2"
+            HTTP_STATUS=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+              -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$TARGET_REPO/issues" \
+              -d "$(jq -n --arg t "$title" --arg b "$body" '{title: $t, body: $b}')")
+            if [ "$HTTP_STATUS" != "201" ]; then
+              echo "Failed to create issue (HTTP $HTTP_STATUS):"
+              cat /tmp/response.json
+              exit 1
+            fi
+            echo "Issue created: $(jq -r '.html_url' /tmp/response.json)"
+          }
+
+          # Helper: patch an issue in the target repo; exits on failure
+          patch_issue() {
+            local number="$1" payload="$2"
+            HTTP_STATUS=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+              -X PATCH \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$TARGET_REPO/issues/$number" \
+              -d "$payload")
+            if [ "$HTTP_STATUS" != "200" ]; then
+              echo "Failed to update issue #$number (HTTP $HTTP_STATUS):"
+              cat /tmp/response.json
+              exit 1
+            fi
+          }
+
+          if [ "$EVENT_ACTION" = "opened" ]; then
+            echo "Creating new issue in $TARGET_REPO..."
+            create_issue "$ISSUE_TITLE" "$FULL_BODY"
+
+          elif [ "$EVENT_ACTION" = "edited" ]; then
+            TARGET_ISSUE=$(find_target_issue)
+            if [ -z "$TARGET_ISSUE" ]; then
+              echo "No mirrored issue found for ${SOURCE_REPO}#${ISSUE_NUMBER}. Creating it..."
+              create_issue "$ISSUE_TITLE" "$FULL_BODY"
+            else
+              echo "Updating mirrored issue #$TARGET_ISSUE in $TARGET_REPO..."
+              patch_issue "$TARGET_ISSUE" \
+                "$(jq -n --arg t "$ISSUE_TITLE" --arg b "$FULL_BODY" '{title: $t, body: $b}')"
+              echo "Issue #$TARGET_ISSUE updated."
+            fi
+
+          elif [ "$EVENT_ACTION" = "closed" ]; then
+            TARGET_ISSUE=$(find_target_issue)
+            if [ -n "$TARGET_ISSUE" ]; then
+              echo "Closing mirrored issue #$TARGET_ISSUE in $TARGET_REPO..."
+              patch_issue "$TARGET_ISSUE" '{"state":"closed"}'
+              echo "Issue #$TARGET_ISSUE closed."
+            else
+              echo "No mirrored issue found. Nothing to close."
+            fi
+
+          elif [ "$EVENT_ACTION" = "reopened" ]; then
+            TARGET_ISSUE=$(find_target_issue)
+            if [ -n "$TARGET_ISSUE" ]; then
+              echo "Reopening mirrored issue #$TARGET_ISSUE in $TARGET_REPO..."
+              patch_issue "$TARGET_ISSUE" '{"state":"open"}'
+              echo "Issue #$TARGET_ISSUE reopened."
+            else
+              echo "No mirrored issue found. Nothing to reopen."
+            fi
+
+          elif [ "$EVENT_ACTION" = "deleted" ]; then
+            TARGET_ISSUE=$(find_target_issue)
+            if [ -n "$TARGET_ISSUE" ]; then
+              echo "Source issue deleted. Closing mirrored issue #$TARGET_ISSUE in $TARGET_REPO..."
+              patch_issue "$TARGET_ISSUE" \
+                "$(jq -n \
+                  --arg body '> ⚠️ Esta issue foi deletada no repositório de origem.' \
+                  '{state: "closed", body: $body}')"
+              echo "Mirrored issue #$TARGET_ISSUE closed due to source deletion."
+            else
+              echo "No mirrored issue found. Nothing to do."
+            fi
+
+          else
+            echo "Action '$EVENT_ACTION' does not require mirroring. Skipping."
+          fi
