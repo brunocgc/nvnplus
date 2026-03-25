@@ -1,139 +1,79 @@
-name: 🐛 Relatório de Bug
-description: Reporte um bug ou comportamento inesperado
+name: 🐛 Bug report
+description: Reportar bug ou comportamento inesperado
 title: "[BUG] "
-labels: ["bug", "precisa-triagem"]
+labels:
+  - bug
+  - precisa-triagem
 body:
   - type: markdown
     attributes:
       value: |
-        Obrigado por reportar um bug no **NVN.PLUS**! Por favor, preencha os campos abaixo com o máximo de detalhes possível para nos ajudar a reproduzir e resolver o problema.
+        Obrigado por reportar um bug no NVN.PLUS.
 
   - type: dropdown
     id: area
     attributes:
-      label: Área Afetada
-      description: Em qual área do NVN.PLUS o bug ocorre?
+      label: Area afetada
       options:
-        - WhatsApp / Conexão
+        - WhatsApp / Conexao
         - FlowBuilder / Chatbot
         - CRM / Atendimento
-        - API / Webhooks / Integrações
-        - Docker / Instalação
-        - Configuração / Variáveis de Ambiente
-        - Relatórios
+        - API / Webhooks / Integracoes
+        - Docker / Instalacao
+        - Configuracao / Variaveis de ambiente
+        - Relatorios
         - Interface / UX
         - Outro
     validations:
       required: true
 
   - type: textarea
-    id: description
+    id: descricao
     attributes:
-      label: Descrição do Bug
-      description: Uma descrição clara e concisa do bug
+      label: Descricao do bug
       placeholder: O que aconteceu?
     validations:
       required: true
 
   - type: textarea
-    id: steps
+    id: passos
     attributes:
-      label: Passos para Reproduzir
-      description: Passos para reproduzir o comportamento
+      label: Passos para reproduzir
       placeholder: |
-        1. Vá para '...'
-        2. Clique em '...'
+        1. Acesse ...
+        2. Clique em ...
         3. Veja o erro
     validations:
       required: true
 
   - type: textarea
-    id: expected
+    id: esperado
     attributes:
-      label: Comportamento Esperado
-      description: O que você esperava que acontecesse?
-      placeholder: Descreva o comportamento esperado
+      label: Comportamento esperado
     validations:
       required: true
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: Comportamento Atual
-      description: O que aconteceu na realidade?
-      placeholder: Descreva o comportamento atual
-    validations:
-      required: true
-
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Screenshots
-      description: Se aplicável, adicione screenshots para ajudar a explicar o problema
-      placeholder: Cole ou arraste imagens aqui
 
   - type: input
-    id: nvnplus_version
+    id: versao
     attributes:
-      label: Versão do NVN.PLUS
-      placeholder: ex: v1.1.9
+      label: Versao do NVN.PLUS
+      placeholder: "ex: v1.1.9"
     validations:
       required: true
 
   - type: dropdown
-    id: connection_type
+    id: instalacao
     attributes:
-      label: Tipo de Conexão WhatsApp
-      description: Preencha apenas se o bug estiver relacionado ao WhatsApp
-      options:
-        - Não se aplica
-        - Baileys
-        - WABA (WhatsApp Business API)
-        - WhatsApp Business (Oficial)
-    validations:
-      required: false
-
-  - type: dropdown
-    id: installation
-    attributes:
-      label: Tipo de Instalação
+      label: Tipo de instalacao
       options:
         - Docker (recomendado)
         - Manual
         - Outro
-    validations:
-      required: true
-
-  - type: textarea
-    id: environment
-    attributes:
-      label: Ambiente
-      description: Informações sobre o ambiente onde o bug ocorreu
-      placeholder: |
-        - SO do servidor: [ex: Ubuntu 22.04, Debian 12]
-        - Docker: [ex: 27.x]
-        - Docker Compose: [ex: 2.x]
-        - Node.js: [ex: 20.x] (apenas instalação manual)
-        - Navegador: [ex: Chrome 120, Firefox 121]
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Informações Adicionais
-      description: Qualquer outra informação relevante sobre o problema
-      placeholder: Adicione contexto adicional aqui
 
   - type: checkboxes
-    id: terms
+    id: termos
     attributes:
       label: Checklist
-      description: Confirme os itens abaixo antes de submeter
       options:
-        - label: Eu verifiquei que não existe uma issue similar já criada nas issues do NVN.PLUS
-          required: true
-        - label: Eu forneci todas as informações necessárias para reproduzir o bug
-          required: true
-        - label: Eu informei a versão do NVN.PLUS e o tipo de instalação utilizados
+        - label: Verifiquei se ja existe issue similar.
           required: true
