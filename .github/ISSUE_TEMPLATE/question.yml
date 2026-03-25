@@ -1,94 +1,54 @@
-name: ❓ Pergunta ou Dúvida
-description: Faça uma pergunta sobre o projeto
+name: ❓Question
+description: Fazer pergunta sobre o projeto
 title: "[PERGUNTA] "
-labels: ["question"]
+labels:
+  - question
 body:
   - type: markdown
     attributes:
       value: |
-        Obrigado por fazer uma pergunta sobre o **NVN.PLUS**! Estamos aqui para ajudar.
-        Antes de continuar, consulte a [documentação](https://github.com/brunocgc/nvnplus/wiki) e verifique se sua dúvida já foi respondida nas [issues existentes](https://github.com/brunocgc/nvnplus/issues).
+        Use este formulario para perguntas sobre o NVN.PLUS.
 
   - type: dropdown
     id: area
     attributes:
-      label: Área da Dúvida
-      description: Selecione a área relacionada à sua pergunta
+      label: Area da duvida
       options:
-        - WhatsApp / Conexão
+        - WhatsApp / Conexao
         - FlowBuilder / Chatbot
         - CRM / Atendimento
-        - API / Webhooks / Integrações
-        - Docker / Instalação
-        - Configuração / Variáveis de Ambiente
-        - Relatórios
+        - API / Webhooks / Integracoes
+        - Docker / Instalacao
+        - Configuracao / Variaveis de ambiente
+        - Relatorios
         - Outro
     validations:
       required: true
 
   - type: textarea
-    id: question
+    id: pergunta
     attributes:
-      label: Sua Pergunta
-      description: Descreva sua pergunta ou dúvida de forma clara
-      placeholder: Como posso...?
+      label: Sua pergunta
+      placeholder: Descreva sua duvida
     validations:
       required: true
 
   - type: input
-    id: version
+    id: versao
     attributes:
-      label: Versão do NVN.PLUS
-      description: Qual versão do NVN.PLUS você está utilizando?
-      placeholder: ex: v1.1.9
-    validations:
-      required: false
-
-  - type: dropdown
-    id: installation
-    attributes:
-      label: Tipo de Instalação
-      options:
-        - Docker (recomendado)
-        - Manual
-        - Outro
-    validations:
-      required: false
+      label: Versao do NVN.PLUS (opcional)
+      placeholder: "ex: v1.1.9"
 
   - type: textarea
-    id: context
+    id: contexto
     attributes:
-      label: Contexto
-      description: Forneça qualquer contexto adicional que possa ajudar a responder sua pergunta
-      placeholder: Eu estava tentando... quando...
-    validations:
-      required: false
-
-  - type: textarea
-    id: attempted
-    attributes:
-      label: O que Você Já Tentou
-      description: Descreva o que você já tentou fazer
-      placeholder: Eu já tentei... mas...
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Informações Adicionais
-      description: Qualquer outra informação que possa ser útil
-      placeholder: Links, código, screenshots, etc.
+      label: Contexto adicional
+      placeholder: O que voce tentou e onde travou
 
   - type: checkboxes
-    id: terms
+    id: termos
     attributes:
       label: Checklist
-      description: Confirme os itens abaixo antes de submeter
       options:
-        - label: Eu verifiquei a documentação do NVN.PLUS antes de fazer esta pergunta
-          required: true
-        - label: Eu pesquisei por perguntas similares nas issues existentes
-          required: true
-        - label: Esta não é uma questão de suporte comercial (para suporte comercial, contate a equipe via canais oficiais)
+        - label: Ja pesquisei documentacao e issues existentes.
           required: true
