@@ -1,0 +1,79 @@
+name: Atualizar Issues ao Concluir PR
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  update-issues:
+    name: Atualizar Issues vinculadas
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    permissions:
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Atualizar Issues vinculadas ao PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const { owner, repo } = context.repo;
+            const targetBranch = pr.base.ref;
+            const isProduction = targetBranch === 'main';
+
+            const query = `query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                pullRequest(number: $number) {
+                  closingIssuesReferences(first: 50) {
+                    nodes {
+                      number
+                      state
+                      title
+                    }
+                  }
+                }
+              }
+            }`;
+
+            const result = await github.graphql(query, {
+              owner,
+              repo,
+              number: pr.number
+            });
+
+            const issues = result.repository.pullRequest.closingIssuesReferences.nodes || [];
+
+            if (issues.length === 0) {
+              core.info('Nenhuma issue vinculada encontrada para este PR.');
+              return;
+            }
+
+            for (const issue of issues) {
+              const envMessage = isProduction
+                ? `🚀 Esta correção foi incluída na branch \`main\` e estará disponível na próxima release do NVN.PLUS.`
+                : `🔧 Esta correção foi mesclada na branch \`${targetBranch}\` e será incluída em uma release futura do NVN.PLUS.`;
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body: `✅ O PR #${pr.number} foi mesclado e esta issue foi resolvida.\n\n${envMessage}`
+              });
+
+              if (issue.state !== 'CLOSED') {
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  labels: ['resolvido']
+                });
+
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  state: 'closed'
+                });
+              }
+            }
