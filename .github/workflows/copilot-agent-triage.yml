@@ -1,0 +1,69 @@
+name: Copilot Agent - Auto Assign
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  assign-copilot-on-issue:
+    name: Auto-assign Copilot (Issue)
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign Copilot agent to issue
+        uses: actions/github-script@v7
+        env:
+          COPILOT_AGENT_LOGIN: ${{ vars.COPILOT_AGENT_LOGIN }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = context.issue.number;
+            const login = "copilot-swe-agent";
+
+            try {
+              await github.rest.issues.addAssignees({
+                owner,
+                repo,
+                issue_number,
+                assignees: [login]
+              });
+              core.info(`Issue #${issue_number} atribuída para @${login}.`);
+            } catch (error) {
+              core.warning(`Não foi possível atribuir @${login} na issue #${issue_number}: ${error.message}`);
+            }
+
+  assign-copilot-on-pr:
+    name: Auto-assign Copilot (PR)
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign Copilot agent to PR
+        uses: actions/github-script@v7
+        env:
+          COPILOT_AGENT_LOGIN: ${{ vars.COPILOT_AGENT_LOGIN }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = context.payload.pull_request.number;
+            const login = "copilot-swe-agent";
+
+            try {
+              await github.rest.issues.addAssignees({
+                owner,
+                repo,
+                issue_number,
+                assignees: [login]
+              });
+              core.info(`PR #${issue_number} atribuída para @${login}.`);
+            } catch (error) {
+              core.warning(`Não foi possível atribuir @${login} na PR #${issue_number}: ${error.message}`);
+            }
