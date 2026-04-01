@@ -1,0 +1,91 @@
+name: Validação de Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  validate:
+    name: Validar Conteúdo da Issue
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Verificar qualidade da issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title;
+            const body = issue.body || '';
+            const bodyLower = body.toLowerCase();
+            const titleLower = title.toLowerCase();
+
+            let warnings = [];
+            let isValid = true;
+
+            // Verificar se o título é muito curto
+            if (title.length < 10) {
+              warnings.push('⚠️ O título da issue é muito curto. Por favor, forneça um título mais descritivo (mínimo 10 caracteres).');
+              isValid = false;
+            }
+
+            // Verificar se o corpo está vazio ou muito curto
+            if (body.trim().length < 20) {
+              warnings.push('⚠️ A descrição da issue é muito curta. Por favor, forneça mais detalhes (mínimo 20 caracteres).');
+              isValid = false;
+            }
+
+            // Verificar se contém apenas placeholder text
+            const placeholders = ['...', 'TODO', 'FIXME', 'lorem ipsum', 'a clear and concise', 'ex. i\'m always frustrated'];
+            if (placeholders.some(p => bodyLower.includes(p.toLowerCase()))) {
+              warnings.push('ℹ️ Parece que a issue contém texto de placeholder. Certifique-se de preencher todas as seções do template.');
+            }
+
+            // Para bugs, verificar se a versão do NVN.PLUS foi informada
+            const isBugReport = titleLower.includes('[bug]') || bodyLower.includes('describe the bug') || bodyLower.includes('descreva o bug');
+            if (isBugReport && !bodyLower.match(/v?\d+\.\d+\.\d+/)) {
+              warnings.push('ℹ️ Para relatórios de bug, informe a versão do NVN.PLUS que está utilizando (ex: v1.1.9). Isso agiliza a investigação.');
+            }
+
+            // Para bugs com WhatsApp, verificar se informou o tipo de conexão
+            const isWhatsAppRelated = bodyLower.includes('whatsapp') || bodyLower.includes('conexão') || bodyLower.includes('connection') || bodyLower.includes('qr code') || bodyLower.includes('waba') || bodyLower.includes('baileys');
+            if (isBugReport && isWhatsAppRelated && !bodyLower.includes('baileys') && !bodyLower.includes('waba') && !bodyLower.includes('whatsapp business')) {
+              warnings.push('ℹ️ Para problemas relacionados ao WhatsApp, informe o tipo de conexão utilizada (Baileys, WABA ou WhatsApp Business API).');
+            }
+
+            // Verificar se é issue de Docker sem informar o ambiente
+            const isDockerRelated = bodyLower.includes('docker') || bodyLower.includes('container') || bodyLower.includes('compose');
+            if (isBugReport && isDockerRelated && !bodyLower.match(/docker(-compose)?\s+(version|v)?\s*\d/i) && !bodyLower.includes('docker version')) {
+              warnings.push('ℹ️ Para problemas com Docker, informe a versão do Docker e Docker Compose utilizados.');
+            }
+
+            // Se houver warnings, adicionar comentário
+            if (warnings.length > 0) {
+              const warningMessage = `## 📋 Revisão Automática da Issue — NVN.PLUS\n\n${warnings.join('\n\n')}\n\n---\n\nPor favor, edite a issue para fornecer mais informações. Isso nos ajudará a resolver seu problema mais rapidamente!\n\nCaso precise de ajuda imediata, consulte a [documentação do NVN.PLUS](https://github.com/nvngroup/nvnplus/wiki) ou abra uma discussão.`;
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: warningMessage
+              });
+
+              // Se não for válida, adicionar label
+              if (!isValid) {
+                await github.rest.issues.addLabels({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  labels: ['precisa-informações']
+                });
+              }
+            } else {
+              // Issue está bem formatada
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '✅ Obrigado por fornecer uma issue bem detalhada! A equipe do NVN.PLUS irá analisar em breve.'
+              });
+            }
