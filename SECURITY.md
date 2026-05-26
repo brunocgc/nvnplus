@@ -4,10 +4,10 @@
 
 Apenas a versão mais recente do NVN.PLUS recebe atualizações de segurança.
 
-| Versão  | Suportada          |
-| ------- | ------------------ |
-| 1.1.9   | :white_check_mark: |
-| < 1.1.8 | :x:                |
+| Versão   | Suportada          |
+| -------- | ------------------ |
+| 2.12.0   | :white_check_mark: |
+| < 2.11.0 | :x:                |
 
 ## Reportando uma Vulnerabilidade
 
